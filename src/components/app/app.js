@@ -17,10 +17,23 @@ export default class App extends React.Component {
   /*Данные приложения */
   state = {
     todoData: [
-    {label: 'Drink Coffee', important: false, id: 1},
-    {label: 'Build Awesome App', important: true, id: 2},
-    {label: 'Have a lunch', important: false, id: 3}
+    this.createTodoItem('Drink Coffee'),
+    this.createTodoItem('Build Awesome App'),
+    this.createTodoItem('Have a lunch')
+    
+    // {label:'Drink Coffee', important: false, id: 1},
+    // {label: 'Build Awesome App', important: true, id: 2},
+    // {label: 'Have a lunch', important: false, id: 3}
   ] } 
+
+  /*Создание элемента списка*/
+
+  createTodoItem(label){
+    return {label,
+           important: false,
+           done: false,
+           id: this.maxId++}
+  }
 
 
   /*Удалить элемент*/
@@ -39,11 +52,7 @@ export default class App extends React.Component {
 
   /*Добавить элемент*/
   addItem = (text) => {
-    const newItem = {
-      label: text,
-      important: false,
-      id: this.maxId++
-    }
+    const newItem = this.createTodoItem(text)
     //console.log ('added', text)
 
     this.setState(({todoData}) => {
@@ -52,13 +61,39 @@ export default class App extends React.Component {
       return {todoData: newArray}
     })
   }
+
+  toggleProp (arr, id, propName){
+
+      const idx = arr.findIndex((el) => el.id === id)
+      const oldItem = arr[idx]
+
+      const newItem = {...oldItem, [propName]: !oldItem[propName]}
+
+      return [
+        ...arr.slice(0, idx),
+        newItem,
+        ...arr.slice(idx+1)
+      ]
+  }
 /*Подсчёт незавершённых событий */
   onToggleImportant = (id) => {
+
+    this.setState(({todoData}) => {
+      
+      return {todoData: this.toggleProp(todoData, id, 'important')}
+
+    })
     console.log('imp', id)
   }
 
   /*Подсчёт важных событий */
   onToggleDone = (id) => {
+
+    this.setState(({todoData}) => {
+      
+      return {todoData: this.toggleProp(todoData, id, 'done')}
+
+    })
     console.log('Don', id)
   }
 
@@ -69,13 +104,21 @@ export default class App extends React.Component {
   //const welcomBox = <span>Welcome back! </span>
 
   render (){
+
+    const { todoData } = this.state
+    //Подсчёт Done
+    const doneCount = todoData.filter((el) => el.done).length
+
+    //Подсчёт ToDO
+    const todoCount = todoData.length - doneCount
+
     return (
       <div className = "todo-app"> 
-       <AppHeader toDo = {1} done = {3}/>
+       <AppHeader toDo = {todoCount} done = {doneCount}/>
         <div className = "todo-app d-flex">
          <SearchPanel/><ItemStatusFilter/>
         </div>  
-         <ToDoList todos = {this.state.todoData}
+         <ToDoList todos = {todoData}
          onDeleted = {this.deleteItem}
          onToggleImportant = {this.onToggleImportant}
          onToggleDone = {this.onToggleDone}/>  
