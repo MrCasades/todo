@@ -12,6 +12,9 @@ import './app.css'
 
 export default class App extends React.Component {
 
+  maxId = 100//начальный id
+
+  /*Данные приложения */
   state = {
     todoData: [
     {label: 'Drink Coffee', important: false, id: 1},
@@ -19,6 +22,8 @@ export default class App extends React.Component {
     {label: 'Have a lunch', important: false, id: 3}
   ] } 
 
+
+  /*Удалить элемент*/
   deleteItem = (id) => {
     this.setState(({todoData}) => {
       const idx = todoData.findIndex((el) => el.id === id)
@@ -32,9 +37,32 @@ export default class App extends React.Component {
     })
   }
 
+  /*Добавить элемент*/
   addItem = (text) => {
-    console.log ('added', text)
+    const newItem = {
+      label: text,
+      important: false,
+      id: this.maxId++
+    }
+    //console.log ('added', text)
+
+    this.setState(({todoData}) => {
+      const newArray = [...todoData, newItem]
+
+      return {todoData: newArray}
+    })
   }
+/*Подсчёт незавершённых событий */
+  onToggleImportant = (id) => {
+    console.log('imp', id)
+  }
+
+  /*Подсчёт важных событий */
+  onToggleDone = (id) => {
+    console.log('Don', id)
+  }
+
+  
 
  // const isLogIn = true
   //const logInBox = <span>Log in please!</span>
@@ -48,7 +76,9 @@ export default class App extends React.Component {
          <SearchPanel/><ItemStatusFilter/>
         </div>  
          <ToDoList todos = {this.state.todoData}
-         onDeleted = {this.deleteItem}/>  
+         onDeleted = {this.deleteItem}
+         onToggleImportant = {this.onToggleImportant}
+         onToggleDone = {this.onToggleDone}/>  
          <ItemAddForm onAddItem = {this.addItem}/>  
     </div>
     )
