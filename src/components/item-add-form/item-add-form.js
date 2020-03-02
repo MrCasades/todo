@@ -4,6 +4,7 @@ import './item-add-form.css';
 
 export default class ItemADddForm extends React.Component {
 
+    /*Получение значения из формы*/
     onLabelChange = (event) => {
         console.log ('.')
     }
