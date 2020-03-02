@@ -3,14 +3,23 @@ import React from 'react';
 import './item-add-form.css';
 
 export default class ItemADddForm extends React.Component {
+
+    onLabelChange = (event) => {
+        console.log ('.')
+    }
+
     render(){
         return (
-            <div className = "item-add-form">
+            <form className = "item-add-form d-flex">
+                <input type="text" 
+                        className = "form-control"
+                        onChange = {this.onLabelChange}
+                        placeholder = "Your text..."/>
                 <button className = "btn btn-outline-secondary"
                 onClick = {() => this.props.onAddItem ('Hello!')}>
-                    Add Element
+                    Add
                 </button>
-            </div>
+            </form>
         )
     }
 }
