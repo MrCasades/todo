@@ -24,7 +24,12 @@ export default class App extends React.Component {
     // {label:'Drink Coffee', important: false, id: 1},
     // {label: 'Build Awesome App', important: true, id: 2},
     // {label: 'Have a lunch', important: false, id: 3}
-  ] } 
+  ],
+  
+
+  term: '',//Для ильтрации todo Data
+  filter:'all'//Реализац. фильтра
+} 
 
   /*Создание элемента списка*/
 
@@ -97,6 +102,43 @@ export default class App extends React.Component {
     console.log('Don', id)
   }
 
+  search(items, term) {
+
+    if (term.length === 0){
+      return items
+    }
+
+    return items.filter((item) => {
+      return item.label.
+      toLowerCase().indexOf(term.toLowerCase()) > -1
+    })
+  }
+
+  filter (items, filter){
+    switch(filter){
+      case 'all':
+        return items
+      case 'active':
+        return items.filter((item) => !item.done)
+      case 'done': 
+        return items.filter((item) => item.done)
+      default:
+        return items
+
+    }
+  }
+
+  /*Реализация поиска */
+  onSearchChange = (term) => {
+    this.setState({term})
+  }
+
+  /*Реализация фильтра */
+  onFilterChange = (filter) => {
+    this.setState({filter})
+  }
+  
+  
   
 
  // const isLogIn = true
@@ -105,7 +147,9 @@ export default class App extends React.Component {
 
   render (){
 
-    const { todoData } = this.state
+    const { todoData, term, filter } = this.state
+
+    const visibleItem = this.filter(this.search(todoData, term), filter)
     //Подсчёт Done
     const doneCount = todoData.filter((el) => el.done).length
 
@@ -116,9 +160,12 @@ export default class App extends React.Component {
       <div className = "todo-app"> 
        <AppHeader toDo = {todoCount} done = {doneCount}/>
         <div className = "todo-app d-flex">
-         <SearchPanel/><ItemStatusFilter/>
+         <SearchPanel 
+         onSearchChange = {this.onSearchChange}/>
+         <ItemStatusFilter filter = {filter}
+            onFilterChange = {this.onFilterChange}/>
         </div>  
-         <ToDoList todos = {todoData}
+         <ToDoList todos = {visibleItem}
          onDeleted = {this.deleteItem}
          onToggleImportant = {this.onToggleImportant}
          onToggleDone = {this.onToggleDone}/>  
